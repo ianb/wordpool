@@ -50,6 +50,18 @@ $(function () {
       this.letters.push(l);
     },
 
+    clear: function () {
+      for (var i=0; i<this.letters.length; i++) {
+        this.letters[i].el.remove();
+      }
+      this.letters = [];
+    },
+
+    shuffle: function () {
+      this.clear();
+      this.refreshLetters();
+    },
+
     pickLocation: function () {
       var width = Letter.prototype.width;
       var height = Letter.prototype.height;
@@ -236,6 +248,11 @@ $(function () {
       }
     });
 
+  });
+
+  $("#shuffle").click(function () {
+    addScore(-1);
+    Letters.shuffle();
   });
 
 });
