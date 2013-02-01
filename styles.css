@@ -87,3 +87,11 @@ body {
     border-radius: 2px;
     user-select: none;
 }
+
+a.button {
+    text-decoration: none;
+    background-color: #666;
+    color: #fff;
+    border-radius: 0.5em;
+    padding: 2px 4px 2px 4px;
+}
