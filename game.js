@@ -100,7 +100,7 @@ $(function () {
     },
 
     pickLetter: function () {
-      return letterPlacer.pick(freqLetters);
+      return letterPicker.pick(freqLetters);
     },
 
     createLetter: function () {
@@ -180,8 +180,9 @@ $(function () {
     return o;
   }
 
-  var letterPlacer = RandomStream(1);
-  var picker = RandomStream(2);
+  var letterPicker = RandomStream(1);
+  var letterPlacer = RandomStream(2);
+  var picker = RandomStream(3);
 
   Letter.prototype = {
     width: 20,
