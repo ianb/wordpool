@@ -180,9 +180,11 @@ $(function () {
     return o;
   }
 
-  var letterPicker = RandomStream(1);
-  var letterPlacer = RandomStream(2);
-  var picker = RandomStream(3);
+  var letterPicker = RandomStream();
+  var letterPlacer = RandomStream();
+  var picker = RandomStream();
+
+  var letterCount = 0;
 
   Letter.prototype = {
     width: 20,
@@ -190,11 +192,8 @@ $(function () {
 
     constructor: function (l, x, y) {
       this.letter = l;
-      if (! x) {
-        x = Math.floor(letterPlacer() * ($container.width() - this.width));
-        y = Math.floor(letterPlacer() * ($container.height() - this.height));
-      }
       this.el = $('<div class="letter">').text(l.toUpperCase());
+      this.el.attr("data-count", letterCount++);
       this.el.css({
         top: y,
         left: x
