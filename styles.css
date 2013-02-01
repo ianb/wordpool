@@ -21,6 +21,17 @@ body {
     border: 1px solid #0f0;
 }
 
+#selector {
+    position: absolute;
+    background-color: #00f;
+    opacity: 0.2;
+    border: 2px solid #00f;
+}
+
+#selectoff {
+    position: absolute;
+    color: #f00;
+}
 
 .letter {
     position: absolute;

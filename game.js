@@ -1,6 +1,8 @@
 $(function () {
 
   var $container = $("#container");
+  var $selector = $("#selector");
+  var $selectoff = $("#selectoff");
 
   var freqLetters = [];
   (function initFreqLetters() {
@@ -67,6 +69,47 @@ $(function () {
   Letters.refreshLetters();
 
   $container.mousedown(function (event) {
+    var startX = event.pageX;
+    var startY = event.pageY;
+    $selector.show().css({
+      top: startY,
+      left: startX,
+      width: 10,
+      height: 10
+    });
+    $selectoff.hide().css({
+      top: startY,
+      left: startX
+    });
+
+    function selectoff() {
+      return false;
+    }
+
+    function mousemove(event2) {
+      var x = event2.pageX;
+      var y = event2.pageY;
+      console.log("got", x, y, startX, startY);
+      if (x < startX || y < startY) {
+        $selectoff.show();
+        $selector.hide();
+      } else {
+        $selectoff.hide();
+        $selector.show();
+      }
+      $selector.css({
+        width: x-startX,
+        height: y-startY
+      });
+    }
+
+    $(document).bind("mousemove", mousemove);
+    $(document).bind("selectstart", selectoff);
+    $(document).one("mouseup", function () {
+      $(document).unbind("mousemove", mousemove);
+      $(document).unbind("selectstart", selectoff);
+      $selectoff.hide();
+    });
 
   });
 
