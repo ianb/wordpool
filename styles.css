@@ -6,7 +6,6 @@ body {
     user-select: none;
     width: 100%;
     height: 80%;
-    border: 1px solid #f00;
     position: absolute;
     top: 0px;
     left: 0px;
@@ -18,7 +17,7 @@ body {
     height: 20%;
     bottom: 0px;
     left: 0px;
-    border: 1px solid #0f0;
+    border-top: 3px solid #000;
 }
 
 #score {
@@ -31,9 +30,15 @@ body {
 
 #selector {
     position: absolute;
+    border: 2px solid #00f;
+    border-radius: 2px;
+}
+
+#selector-inner {
+    width: 100%;
+    height: 100%;
     background-color: #00f;
     opacity: 0.2;
-    border: 2px solid #00f;
 }
 
 #selectoff {

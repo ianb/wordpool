@@ -30,8 +30,8 @@ with open("words") as fp:
 
 for letter in data['freq']:
     f = data['minFreq']
-    if f == -1 or f < data['freq'][letter]:
-        data['freq'][letter] = f
+    if f == -1 or f > data['freq'][letter]:
+        data['minFreq'] = data['freq'][letter]
 
 with open("words.js", "w") as fp:
     fp.write("var words = %s\n" % json.dumps(data, separators=(",", ":")))

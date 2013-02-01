@@ -5,6 +5,7 @@ $(function () {
   var $selectoff = $("#selectoff");
   var $picking = $("#picking");
   var $result = $("#result");
+  var $score = $("#score");
 
   var freqLetters = [];
   (function initFreqLetters() {
@@ -16,6 +17,29 @@ $(function () {
     }
   })();
 
+  function wordScore(word) {
+    var l = word.length;
+    if (l == 1) {
+      return 0.1;
+    }
+    if (l == 2) {
+      return 0.3;
+    }
+    if (l == 3) {
+      return 1;
+    }
+    if (l == 4) {
+      return 1.4;
+    }
+    return l - 3;
+  }
+
+  function addScore(n) {
+    var cur = parseFloat($score.text() || 0, 10);
+    cur += n;
+    $score.text(cur.toFixed(1));
+  }
+
   var Letters = {
     targetLetters: 100,
 
@@ -23,6 +47,32 @@ $(function () {
 
     addLetter: function (l) {
       this.letters.push(l);
+    },
+
+    pickLocation: function () {
+      var width = Letter.prototype.width;
+      var height = Letter.prototype.height;
+      var totalWidth = $container.width();
+      var totalHeight = $container.height();
+      var _len = this.letters.length;
+      while (1) {
+        var x = Math.floor(letterPlacer() * (totalWidth - width));
+        var y = Math.floor(letterPlacer() * (totalHeight - height));
+        var good = true;
+        for (var i=0; i<_len; i++) {
+          var l = this.letters[i];
+          if (x >= l.x &&
+              y >= l.y &&
+              x <= l.x+width &&
+              y <= l.y+height) {
+            good = false;
+            break;
+          }
+        }
+        if (good) {
+          return [x, y];
+        }
+      }
     },
 
     removeLetter: function (l) {
@@ -40,7 +90,8 @@ $(function () {
     },
 
     createLetter: function () {
-      var l = Letter(this.pickLetter());
+      var pos = this.pickLocation();
+      var l = Letter(this.pickLetter(), pos[0], pos[1]);
       this.addLetter(l);
     },
 
@@ -78,7 +129,7 @@ $(function () {
       });
       var word = wordLetters.sort().join("");
       var result = words.sorted[word];
-      if (! result) {
+      if ((! word) || (! result)) {
         $result.text("No word :(");
         $result.addClass("bad");
         $selector.hide();
@@ -91,6 +142,7 @@ $(function () {
       letters.forEach(function (l) {
         this.removeLetter(l);
       }, this);
+      addScore(wordScore(word));
       this.refreshLetters();
     }
   };
