@@ -2,7 +2,6 @@ $(function () {
 
   var $container = $("#container");
   var $selector = $("#selector");
-  var $selectoff = $("#selectoff");
   var $picking = $("#picking");
   var $result = $("#result");
   var $score = $("#score");
@@ -33,6 +32,17 @@ $(function () {
       return 1.4;
     }
     return l - 3;
+  }
+
+  function squareScore(pos) {
+    var width = (pos[2] - pos[0]) / Letter.prototype.width;
+    var height = (pos[3] - pos[1]) / Letter.prototype.height;
+    var total = width + height;
+    if (total < 6) {
+      return 0;
+    }
+    console.log("score", width, height, total);
+    return (total - 6) * 0.05;
   }
 
   function addScore(n) {
@@ -116,6 +126,7 @@ $(function () {
     },
 
     showIntersection: function (x, y, x2, y2) {
+      $(".selected-letter").removeClass("selected-letter");
       $picking.empty();
       $result.empty();
       var _len = this.letters.length;
@@ -132,6 +143,7 @@ $(function () {
           word.push(l.letter);
           el.data("letter", l);
           $picking.append(el);
+          l.el.addClass("selected-letter");
         }
       }
       if (word.length && hint.checked) {
@@ -145,7 +157,7 @@ $(function () {
       }
     },
 
-    calculateWord: function () {
+    calculateWord: function (pos) {
       var letters = [];
       var wordLetters = [];
       $picking.find(".pick-letter").each(function () {
@@ -164,11 +176,16 @@ $(function () {
       $result.removeClass("bad").empty();
       result = result.split(/,/g);
       result = picker.pick(result);
-      $result.text(result);
+      var score = wordScore(word);
+      var score2 = squareScore(pos);
+      $result.text(
+        result + " = " + score.toFixed(1) + " (word) + " +
+            score2.toFixed(1) + " (square)");
       letters.forEach(function (l) {
         this.removeLetter(l);
       }, this);
       addScore(wordScore(word));
+
       $selector.hide();
       this.refreshLetters();
     }
@@ -215,39 +232,25 @@ $(function () {
       width: 10,
       height: 10
     });
-    $selectoff.hide().css({
-      top: startY,
-      left: startX
-    });
 
     function selectoff() {
       return false;
     }
 
-    var good = true;
+    var pos = [];
     function mousemove(event2) {
-      var x = event2.pageX;
-      var y = event2.pageY;
-      if (x < startX || y < startY) {
-        if (good) {
-          $selectoff.show();
-          $selector.hide();
-          good = false;
-        }
-      } else {
-        if (! good) {
-          $selectoff.hide();
-          $selector.show();
-          good = true;
-        }
-      }
-      if (good) {
-        Letters.showIntersection(startX, startY, x, y);
-      }
+      var x1 = Math.min(startX, event2.pageX);
+      var x2 = Math.max(startX, event2.pageX);
+      var y1 = Math.min(startY, event2.pageY);
+      var y2 = Math.max(startY, event2.pageY);
+      Letters.showIntersection(x1, y1, x2, y2);
       $selector.css({
-        width: x-startX,
-        height: y-startY
+        top: y1,
+        left: x1,
+        width: x2-x1,
+        height: y2-y1
       });
+      pos = [x1, y1, x2, y2];
     }
 
     $(document).bind("mousemove", mousemove);
@@ -255,10 +258,7 @@ $(function () {
     $(document).one("mouseup", function () {
       $(document).unbind("mousemove", mousemove);
       $(document).unbind("selectstart", selectoff);
-      $selectoff.hide();
-      if (good) {
-        Letters.calculateWord();
-      }
+      Letters.calculateWord(pos);
     });
 
     // An alternative to selectstart:

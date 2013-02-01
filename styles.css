@@ -47,11 +47,6 @@ body {
     opacity: 0.2;
 }
 
-#selectoff {
-    position: absolute;
-    color: #f00;
-}
-
 #result {
     font-weight: bold;
     font-height: 20px;
@@ -75,6 +70,10 @@ body {
     vertical-align: center;
     border-radius: 2px;
     user-select: none;
+}
+
+.selected-letter {
+    background-color: #9f9;
 }
 
 .pick-letter {
