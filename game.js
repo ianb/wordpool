@@ -39,6 +39,7 @@ $(function () {
     cur += n;
     $score.text(cur.toFixed(1));
   }
+  addScore(0);
 
   var Letters = {
     targetLetters: 100,
@@ -143,6 +144,7 @@ $(function () {
         this.removeLetter(l);
       }, this);
       addScore(wordScore(word));
+      $selector.hide();
       this.refreshLetters();
     }
   };
