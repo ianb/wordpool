@@ -8,6 +8,8 @@ with open("words") as fp:
         words={},
         sorted={},
         freq={},
+        minFreq=-1,
+        maxFreq=-1,
         )
     for line in words:
         line = line.strip()
@@ -22,7 +24,14 @@ with open("words") as fp:
         v += line
         data['sorted'][letters] = v
         for letter in letters:
-            data['freq'][letter] = data['freq'].get(letter, 0) + 1
+            f = data['freq'][letter] = data['freq'].get(letter, 0) + 1
+            if f > data['maxFreq']:
+                data['maxFreq'] = f
+
+for letter in data['freq']:
+    f = data['minFreq']
+    if f == -1 or f < data['freq'][letter]:
+        data['freq'][letter] = f
 
 with open("words.js", "w") as fp:
     fp.write("var words = %s\n" % json.dumps(data, separators=(",", ":")))
