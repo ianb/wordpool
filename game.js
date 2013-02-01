@@ -6,6 +6,7 @@ $(function () {
   var $picking = $("#picking");
   var $result = $("#result");
   var $score = $("#score");
+  var hint = $("#hint")[0];
 
   var freqLetters = [];
   (function initFreqLetters() {
@@ -116,9 +117,11 @@ $(function () {
 
     showIntersection: function (x, y, x2, y2) {
       $picking.empty();
+      $result.empty();
       var _len = this.letters.length;
       var width = Letter.prototype.width / 2;
       var height = Letter.prototype.height / 2;
+      var word = [];
       for (var i=0; i<_len; i++) {
         var l = this.letters[i];
         if (x < (l.x + width) &&
@@ -126,8 +129,18 @@ $(function () {
             x2 > (l.x - width) &&
             y2 > (l.y - height)) {
           var el = $('<div class="pick-letter">').text(l.letter.toUpperCase());
+          word.push(l.letter);
           el.data("letter", l);
           $picking.append(el);
+        }
+      }
+      if (word.length && hint.checked) {
+        word.sort();
+        word = word.join("");
+        if (words.sorted[word]) {
+          $result.text("maybe...");
+        } else {
+          $result.text("");
         }
       }
     },
