@@ -3,6 +3,7 @@ $(function () {
   var $container = $("#container");
   var $selector = $("#selector");
   var $selectoff = $("#selectoff");
+  var $picking = $("#picking");
 
   var freqLetters = [];
   (function initFreqLetters() {
@@ -36,6 +37,23 @@ $(function () {
       while (this.letters.length < this.targetLetters) {
         this.createLetter();
       }
+    },
+
+    showIntersection: function (x, y, x2, y2) {
+      $picking.empty();
+      var _len = this.letters.length;
+      var width = Letter.prototype.width / 2;
+      var height = Letter.prototype.height / 2;
+      for (var i=0; i<_len; i++) {
+        var l = this.letters[i];
+        if (x < (l.x + width) &&
+            y < (l.y + height) &&
+            x2 > (l.x - width) &&
+            y2 > (l.y - height)) {
+          var el = $('<div class="pick-letter">').text(l.letter.toUpperCase());
+          $picking.append(el);
+        }
+      }
     }
   };
 
@@ -52,7 +70,7 @@ $(function () {
     height: 20,
 
     constructor: function (l, x, y) {
-      this.l = l;
+      this.letter = l;
       if (! x) {
         x = Math.floor(letterPlacer() * ($container.width() - this.width));
         y = Math.floor(letterPlacer() * ($container.height() - this.height));
@@ -62,6 +80,8 @@ $(function () {
         top: y,
         left: x
       });
+      this.x = x;
+      this.y = y;
       $container.append(this.el);
     }
   };
@@ -86,16 +106,25 @@ $(function () {
       return false;
     }
 
+    var good = true;
     function mousemove(event2) {
       var x = event2.pageX;
       var y = event2.pageY;
-      console.log("got", x, y, startX, startY);
       if (x < startX || y < startY) {
-        $selectoff.show();
-        $selector.hide();
+        if (good) {
+          $selectoff.show();
+          $selector.hide();
+          good = false;
+        }
       } else {
-        $selectoff.hide();
-        $selector.show();
+        if (! good) {
+          $selectoff.hide();
+          $selector.show();
+          good = true;
+        }
+      }
+      if (good) {
+        Letters.showIntersection(startX, startY, x, y);
       }
       $selector.css({
         width: x-startX,
