@@ -261,6 +261,8 @@ $(function () {
       }
     });
 
+    // An alternative to selectstart:
+    return false;
   });
 
   $("#shuffle").click(function () {

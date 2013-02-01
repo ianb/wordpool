@@ -19,6 +19,7 @@ body {
     left: 0px;
     border-top: 3px solid #000;
     padding-left: 1em;
+    padding-right: 1em;
 }
 
 #score-container {
