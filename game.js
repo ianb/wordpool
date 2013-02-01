@@ -4,6 +4,7 @@ $(function () {
   var $selector = $("#selector");
   var $selectoff = $("#selectoff");
   var $picking = $("#picking");
+  var $result = $("#result");
 
   var freqLetters = [];
   (function initFreqLetters() {
@@ -22,6 +23,16 @@ $(function () {
 
     addLetter: function (l) {
       this.letters.push(l);
+    },
+
+    removeLetter: function (l) {
+      l.el.remove();
+      for (var i=0; i<this.letters.length; i++) {
+        if (this.letters[i] === l) {
+          this.letters.splice(i, 1);
+          break;
+        }
+      }
     },
 
     pickLetter: function () {
@@ -51,9 +62,36 @@ $(function () {
             x2 > (l.x - width) &&
             y2 > (l.y - height)) {
           var el = $('<div class="pick-letter">').text(l.letter.toUpperCase());
+          el.data("letter", l);
           $picking.append(el);
         }
       }
+    },
+
+    calculateWord: function () {
+      var letters = [];
+      var wordLetters = [];
+      $picking.find(".pick-letter").each(function () {
+        var e = $(this);
+        wordLetters.push(e.text().toLowerCase());
+        letters.push(e.data("letter"));
+      });
+      var word = wordLetters.sort().join("");
+      var result = words.sorted[word];
+      if (! result) {
+        $result.text("No word :(");
+        $result.addClass("bad");
+        $selector.hide();
+        return;
+      }
+      $result.removeClass("bad").empty();
+      result = result.split(/,/g);
+      result = picker.pick(result);
+      $result.text(result);
+      letters.forEach(function (l) {
+        this.removeLetter(l);
+      }, this);
+      this.refreshLetters();
     }
   };
 
@@ -64,6 +102,7 @@ $(function () {
   }
 
   var letterPlacer = RandomStream(1);
+  var picker = RandomStream(2);
 
   Letter.prototype = {
     width: 20,
@@ -138,6 +177,9 @@ $(function () {
       $(document).unbind("mousemove", mousemove);
       $(document).unbind("selectstart", selectoff);
       $selectoff.hide();
+      if (good) {
+        Letters.calculateWord();
+      }
     });
 
   });
